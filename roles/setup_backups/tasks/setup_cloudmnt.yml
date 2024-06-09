@@ -1,0 +1,36 @@
+---
+- name: Install fuse to allow mounting
+  ansible.builtin.apt:
+    name: fuse
+    state: present
+  become: true
+
+- name: Copy systemd cloud mount service
+  ansible.builtin.template:
+    src: cloudmnt.service.j2
+    dest: /etc/systemd/system/cloudmnt.service
+    mode: '0755'
+  become: true
+
+- name: Ensure cloudmnt mount directory exists
+  ansible.builtin.file:
+    path: "{{ setup_backups_cloudmnt_location }}"
+    state: directory
+    mode: '0755'
+
+- name: Reload systemd to apply cloudmnt
+  ansible.builtin.systemd:
+    daemon_reload: true
+  become: true
+
+- name: Enable cloudmnt service
+  ansible.builtin.systemd:
+    name: cloudmnt
+    enabled: true
+  become: true
+
+- name: Start cloudmnt service
+  ansible.builtin.systemd:
+    name: cloudmnt
+    state: started
+  become: true

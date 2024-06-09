@@ -1,0 +1,98 @@
+---
+- name: Ensure data directories exist
+  ansible.builtin.file:
+    path: "{{ seaweedfs_data_dir }}/{{ item }}"
+    state: directory
+    owner: root
+    group: root
+    mode: '0755'
+  with_items:
+    - master
+    - volume
+
+- name: Download SeaweedFS (amd64)
+  ansible.builtin.get_url:
+    url: "https://github.com/seaweedfs/seaweedfs/releases/download/{{ seaweedfs_version }}/linux_amd64.tar.gz"
+    dest: "/tmp/seaweedfs.tar.gz"
+    mode: '0644'
+  when: ansible_architecture == 'x86_64'
+
+- name: Download SeaweedFS (arm64)
+  ansible.builtin.get_url:
+    url: "https://github.com/seaweedfs/seaweedfs/releases/download/{{ seaweedfs_version }}/linux_arm64.tar.gz"
+    dest: "/tmp/seaweedfs.tar.gz"
+    mode: '0644'
+  when: ansible_architecture == 'aarch64'
+
+- name: Extract SeaweedFS
+  ansible.builtin.unarchive:
+    src: "/tmp/seaweedfs.tar.gz"
+    dest: "/tmp"
+    remote_src: true
+
+- name: Move SeaweedFS binary to install dir
+  ansible.builtin.copy:
+    src: "/tmp/weed"
+    dest: "{{ seaweedfs_install_dir }}/weed"
+    mode: '0755'
+    remote_src: true
+
+- name: Configure and start SeaweedFS master server
+  ansible.builtin.template:
+    src: seaweedfs-master.service.j2
+    dest: /etc/systemd/system/seaweedfs-master.service
+    mode: '0755'
+  when: inventory_hostname == seaweedfs_master_ip
+  notify: Restart seaweedfs master service
+
+- name: Configure and start SeaweedFS volume server
+  ansible.builtin.template:
+    src: seaweedfs-volume.service.j2
+    dest: /etc/systemd/system/seaweedfs-volume.service
+    mode: '0755'
+  notify: Restart seaweedfs volume service
+
+- name: Configure and start SeaweedFS filer
+  ansible.builtin.template:
+    src: seaweedfs-filer.service.j2
+    dest: /etc/systemd/system/seaweedfs-filer.service
+    mode: '0755'
+  when: inventory_hostname == seaweedfs_master_ip
+  notify: Restart seaweedfs filer service
+
+- name: Create FUSE mount point
+  ansible.builtin.file:
+    path: "{{ seaweedfs_fuse_mount }}"
+    state: directory
+    owner: root
+    group: root
+    mode: '0755'
+
+- name: Mount SeaweedFS FUSE filesystem
+  ansible.builtin.template:
+    src: seaweedfs-mount.service.j2
+    dest: /etc/systemd/system/seaweedfs-mount.service
+    mode: '0755'
+  notify: Restart seaweedfs mount service
+
+- name: Enable and start all SeaweedFS services on the manager
+  when: inventory_hostname == seaweedfs_master_ip
+  ansible.builtin.systemd:
+    name: "{{ item }}"
+    enabled: true
+    state: started
+  with_items:
+    - seaweedfs-master.service
+    - seaweedfs-volume.service
+    - seaweedfs-filer.service
+    - seaweedfs-mount.service
+
+- name: Enable and start remaining SeaweedFS services on other nodes
+  when: inventory_hostname != seaweedfs_master_ip
+  ansible.builtin.systemd:
+    name: "{{ item }}"
+    enabled: true
+    state: started
+  with_items:
+    - seaweedfs-volume.service
+    - seaweedfs-mount.service

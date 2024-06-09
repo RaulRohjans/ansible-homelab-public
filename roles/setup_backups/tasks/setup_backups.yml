@@ -1,0 +1,21 @@
+---
+- name: Create storage backup config directory
+  ansible.builtin.file:
+    path: "{{ setup_backups_storage_script_location }}"
+    state: directory
+    mode: '0755'
+
+- name: Copy storage backup script
+  ansible.builtin.template:
+    src: storage-backup.sh.j2
+    dest: "{{ setup_backups_storage_script_location }}/storage-backup.sh"
+    mode: '0644'
+  become: true
+
+- name: Set up cron for file backups
+  ansible.builtin.cron:
+    name: "storage_backup_script"
+    minute: "0"
+    hour: "1"
+    job: "{{ setup_backups_storage_script_location }}/storage-backup.sh"
+    user: root

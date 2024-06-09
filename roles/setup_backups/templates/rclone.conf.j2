@@ -1,0 +1,27 @@
+{% raw %}
+#Sharepoint IPS
+[PFilesSharepoint]
+type = onedrive
+token = # Removed for obvious reasons
+drive_id = # Removed for obvious reasons
+drive_type = documentLibrary
+
+[PFilesSharepointCrypt]
+type = crypt
+remote = PFilesSharepoint:Raul
+filename_encryption = obfuscate
+password = # Removed for obvious reasons
+
+#Sharepoint INETE
+[PFilesSharepointB]
+type = onedrive
+token = # Removed for obvious reasons
+drive_id = # Removed for obvious reasons
+drive_type = documentLibrary
+
+[PFilesSharepointCryptB]
+type = crypt
+remote = PFilesSharepointB:Raul
+filename_encryption = obfuscate
+password = # Removed for obvious reasons
+{% endraw %}

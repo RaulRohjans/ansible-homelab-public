@@ -1,0 +1,9 @@
+---
+- name: Install necessary dependencies
+  ansible.builtin.include_tasks: install_dependencies.yml
+
+- name: Prepare docker environment
+  ansible.builtin.include_tasks: prepare_docker.yml
+
+- name: Setup docker services
+  ansible.builtin.include_tasks: setup_services.yml

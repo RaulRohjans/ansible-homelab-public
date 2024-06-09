@@ -1,0 +1,70 @@
+services:
+  immich-server:
+    image: ghcr.io/immich-app/immich-server:${IMMICH_VERSION:-release}
+    command: [ "start.sh", "immich" ]
+    volumes:
+      - {{ docker_storage_mount_point }}/immich/immich-uploads:/usr/src/app/upload
+      - /etc/localtime:/etc/localtime:ro
+    env_file:
+      - .env
+    deploy:
+      placement:
+        constraints:
+          - node.hostname == homeserver
+    ports:
+      - 2283:3001
+    depends_on:
+      - redis
+      - database
+
+  immich-microservices:
+    image: ghcr.io/immich-app/immich-server:${IMMICH_VERSION:-release}
+    command: [ "start.sh", "microservices" ]
+    volumes:
+      - {{ docker_storage_mount_point }}/immich/immich-uploads:/usr/src/app/upload
+      - /etc/localtime:/etc/localtime:ro
+    deploy:
+      placement:
+        constraints:
+          - node.hostname == homeserver
+    env_file:
+      - .env
+    depends_on:
+      - redis
+      - database
+
+  immich-machine-learning:
+    image: ghcr.io/immich-app/immich-machine-learning:${IMMICH_VERSION:-release}
+    volumes:
+      - {{ docker_storage_mount_point }}/immich/immich-cache:/cache
+    deploy:
+      placement:
+        constraints:
+          - node.hostname == homeserver
+    env_file:
+      - .env
+
+  redis:
+    image: redis:6.2-alpine@sha256:c5a607fb6e1bb15d32bbcf14db22787d19e428d59e31a5da67511b49bb0f1ccc
+    deploy:
+      placement:
+        constraints:
+          - node.hostname == homeserver
+
+  database:
+    image: tensorchord/pgvecto-rs:pg14-v0.1.11@sha256:0335a1a22f8c5dd1b697f14f079934f5152eaaa216c09b61e293be285491f8ee
+    hostname: immich_postgres
+    env_file:
+      - .env
+    deploy:
+      placement:
+        constraints:
+          - node.hostname == homeserver
+    environment:
+      POSTGRES_PASSWORD: ${DB_PASSWORD}
+      POSTGRES_USER: ${DB_USERNAME}
+      POSTGRES_DB: ${DB_DATABASE_NAME}
+      POSTGRES_PASSWORD: ${DB_PASSWORD}
+      POSTGRES_HOST_AUTH_METHOD: trust
+    volumes:
+      - {{ docker_storage_mount_point }}/immich/immich-pgdata:/var/lib/postgresql/data

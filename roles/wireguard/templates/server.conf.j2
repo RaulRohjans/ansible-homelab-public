@@ -1,0 +1,14 @@
+[Interface]
+Address = {{ wireguard_server_wireguard_ip }}
+ListenPort = {{ wireguard_server_port }}
+PrivateKey = {{ server_private_key.stdout }}
+PostUp = sysctl -w net.ipv4.ip_forward=1
+PostUp = sysctl -w net.ipv6.conf.all.forwarding=1
+PostUp = iptables -A FORWARD -i %i -j ACCEPT; iptables -A FORWARD -o %i -j ACCEPT; iptables -t nat -A POSTROUTING -o {{ wireguard_server_internal_interface }} -j MASQUERADE
+PostDown = iptables -D FORWARD -i %i -j ACCEPT; iptables -D FORWARD -o %i -j ACCEPT; iptables -t nat -D POSTROUTING -o {{ wireguard_server_internal_interface }} -j MASQUERADE
+
+{% for peer in wireguard_peers_with_keys %}
+[Peer]
+PublicKey = {{ peer.public_key }}
+AllowedIPs = {{ peer.allowed_ips }}
+{% endfor %}

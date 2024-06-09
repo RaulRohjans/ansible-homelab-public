@@ -1,0 +1,7 @@
+# Sharepoint IPS
+/usr/bin/rclone sync {{ storage_mount_point }}/user-shares/ PFilesSharepointCrypt:user-shares/ --links --ignore-errors --config {{ setup_backups_config_location }}/rclone.conf -P;
+/usr/bin/rclone sync {{ storage_mount_point }}/seaweedfs/ PFilesSharepointCrypt:seaweedfs/ --links --ignore-errors --config {{ setup_backups_config_location }}/rclone.conf -P;
+
+# Sharepoint INETE
+/usr/bin/rclone sync {{ storage_mount_point }}/user-shares/ PFilesSharepointCryptB:user-shares/ --links --ignore-errors --config {{ setup_backups_config_location }}/rclone.conf -P;
+/usr/bin/rclone sync {{ storage_mount_point }}/seaweedfs/ PFilesSharepointCryptB:seaweedfs/ --links --ignore-errors --config {{ setup_backups_config_location }}/rclone.conf -P;

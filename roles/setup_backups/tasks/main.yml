@@ -1,0 +1,9 @@
+---
+- name: Setup rclone and it's config
+  ansible.builtin.include_tasks: setup_rclone.yml
+
+- name: Setup backup scripts
+  ansible.builtin.include_tasks: setup_backups.yml
+
+- name: Create cloud mount service
+  ansible.builtin.include_tasks: setup_cloudmnt.yml

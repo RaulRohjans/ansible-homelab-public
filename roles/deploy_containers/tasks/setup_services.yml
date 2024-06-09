@@ -1,0 +1,31 @@
+---
+
+- name: Create a directory for all services
+  ansible.builtin.file:
+    path: "{{ machine_data_path }}/docker/{{ item.name }}"
+    state: directory
+    mode: '0755'
+  loop: "{{ deploy_containers_services }}"
+
+- name: Copy service templates to corresponding folders
+  ansible.builtin.template:
+    src: "{{ item.name }}/{{ item.name }}.yml.j2"
+    dest: "{{ machine_data_path }}/docker/{{ item.name }}/{{ item.name }}.yml"
+    mode: '0644'
+  loop: "{{ deploy_containers_services }}"
+
+- name: Copy envs of the containers that have them
+  ansible.builtin.template:
+    src: "{{ item.name }}/.env.j2"
+    dest: "{{ machine_data_path }}/docker/{{ item.name }}/.env"
+    mode: '0644'
+  loop: "{{ deploy_containers_services }}"
+  when: item.has_env
+
+- name: Deploy services to Docker Swarm
+  community.docker.docker_stack:
+    state: present
+    name: "{{ item.name }}"
+    compose:
+      - "{{ machine_data_path }}/docker/{{ item.name }}/{{ item.name }}.yml"
+  loop: "{{ deploy_containers_services }}"

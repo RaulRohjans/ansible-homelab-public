@@ -1,0 +1,30 @@
+---
+# Server ----------------------------
+
+# File and directory paths.
+wireguard_server_configuration_directory: "/etc/wireguard"
+wireguard_client_configuration_directory: "{{ machine_data_path }}/wireguard/peers"
+
+# Always run the service (including after reboots)
+wireguard_service_enabled: true
+
+# What interface to use for wireguard and port
+wireguard_service_interface: "wg0"
+wireguard_server_port: 51820
+
+# Server configuration.
+wireguard_server_public_ip: 203.123.113.123
+wireguard_server_wireguard_ip: 10.7.0.1
+wireguard_server_internal_interface: "eth0"
+
+
+# Client ----------------------------
+
+# List of client configurations.
+wireguard_peers: []
+    # - name: main
+    #   allowed_ips: "0.0.0.0/0, ::0/0"
+    #   client_ip: 10.7.0.2
+
+# The private cloud network.  Can also be a comma-separated list.
+wireguard_client_accessible_ips: "10.10.0.0/16"

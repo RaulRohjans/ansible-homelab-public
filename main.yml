@@ -1,0 +1,12 @@
+- name: Raul's homeserver Ansible playbook
+  hosts: all
+  become: true
+
+  roles:
+    - { role: storage_mount, when: "'mainservers' in group_names" }
+    - { role: samba, when: "'mainservers' in group_names" }
+    - { role: seaweedfs }
+    - { role: docker }
+    - { role: deploy_containers, when: "'mainservers' in group_names" }
+    - { role: setup_backups, when: "'mainservers' in group_names" }
+    - { role: wireguard, when: "'mainservers' in group_names" }

@@ -1,0 +1,11 @@
+[Unit]
+Description=SeaweedFS Filer
+After=network.target
+
+[Service]
+ExecStart={{ seaweedfs_install_dir }}/weed filer -master={{ seaweedfs_master_ip }}:9333 -ip={{ seaweedfs_master_ip }} -port=8888
+Restart=always
+User=root
+
+[Install]
+WantedBy=multi-user.target

@@ -1,0 +1,14 @@
+services:
+  app:
+    image: 'jc21/nginx-proxy-manager:latest'
+    ports:
+      - '80:80' # Public HTTP Port
+      - '443:443' # Public HTTPS Port
+      - '81:81' # Admin Web Port
+    deploy:
+      replicas: 3
+      placement:
+        max_replicas_per_node: 1
+    volumes:
+      - {{ docker_storage_mount_point }}/nginx-proxy-manager/nginx-data:/data
+      - {{ docker_storage_mount_point }}/nginx-proxy-manager/nginx-letsencrypt:/etc/letsencrypt

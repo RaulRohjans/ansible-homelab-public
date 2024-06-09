@@ -1,0 +1,18 @@
+# /etc/systemd/system/rclone.service
+[Unit]
+Description=Private Cloud Files (rclone)
+AssertPathIsDirectory={{ setup_backups_cloudmnt_location }}
+After=network-online.target
+
+[Service]
+Type=simple
+ExecStart=/usr/bin/rclone mount \
+        --config={{ setup_backups_config_location }}/rclone.conf \
+        --allow-other \
+        --vfs-cache-mode full PFilesSharepointCrypt: {{ setup_backups_cloudmnt_location }}
+ExecStop=/bin/fusermount -u {{ setup_backups_cloudmnt_location }}
+Restart=always
+RestartSec=10
+
+[Install]
+WantedBy=default.target

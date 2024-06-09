@@ -1,0 +1,11 @@
+[Unit]
+Description=SeaweedFS Volume Server
+After=network.target
+
+[Service]
+ExecStart={{ seaweedfs_install_dir }}/weed volume -dir={{ seaweedfs_data_dir }}/volume -max=5 -mserver={{ seaweedfs_master_ip }}:9333
+Restart=always
+User=root
+
+[Install]
+WantedBy=multi-user.target

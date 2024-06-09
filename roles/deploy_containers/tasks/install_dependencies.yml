@@ -1,0 +1,12 @@
+---
+- name: Install jsondiff
+  ansible.builtin.apt:
+    name: python3-jsondiff
+    state: present
+    update_cache: true
+
+- name: Install pyyaml
+  ansible.builtin.apt:
+    name: python3-yaml
+    state: present
+    update_cache: true

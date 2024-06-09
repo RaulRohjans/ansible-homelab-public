@@ -1,0 +1,14 @@
+- name: Install Wireguard
+  ansible.builtin.import_tasks: install_wireguard.yml
+
+- name: Generate keys
+  ansible.builtin.import_tasks: generate_keys.yml
+
+- name: Prepare peers
+  ansible.builtin.import_tasks: prepare_peers.yml
+
+- name: Generate the app configuration
+  ansible.builtin.import_tasks: generate_configuration.yml
+
+- name: Start the Wireguard service
+  ansible.builtin.import_tasks: start_wireguard_service.yml

@@ -1,0 +1,6 @@
+---
+seaweedfs_version: "3.67"
+seaweedfs_install_dir: "/usr/local/bin"
+seaweedfs_data_dir: "{{ machine_data_path }}/seaweed"
+seaweedfs_master_ip: "{{ groups['mainservers'][0] }}"
+seaweedfs_fuse_mount: "/seaweedfs"

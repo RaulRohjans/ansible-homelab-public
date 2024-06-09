@@ -1,0 +1,8 @@
+---
+- name: Join Docker Swarm
+  ansible.builtin.command: >
+    docker swarm join --token
+    {{ hostvars[groups['mainservers'][0]].worker_join_token.stdout }}
+    {{ hostvars[groups['mainservers'][0]].ansible_host }}:2377
+  when: not docker_swarm_manager
+  changed_when: false

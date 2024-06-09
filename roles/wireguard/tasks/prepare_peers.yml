@@ -1,0 +1,22 @@
+- name: Set peer private keys
+  ansible.builtin.set_fact:
+    peer_private_keys_list: "{{ peer_private_keys.results | map(attribute='stdout') | list }}"
+
+- name: Set peer public keys
+  ansible.builtin.set_fact:
+    peer_public_keys_list: "{{ peer_public_keys.results | map(attribute='stdout') | list }}"
+
+- name: Combine peers with keys
+  ansible.builtin.set_fact:
+    wireguard_peers_with_keys_tmp: "{{ wireguard_peers | zip(peer_private_keys_list, peer_public_keys_list) | map('list') }}"
+
+- name: Initialize wireguard_peers_with_keys
+  ansible.builtin.set_fact:
+    wireguard_peers_with_keys: []
+
+- name: Append peers with keys to the list
+  ansible.builtin.set_fact:
+    wireguard_peers_with_keys: "{{ wireguard_peers_with_keys + [{'allowed_ips': item.0.allowed_ips, 'private_key': item.1, 'public_key': item.2}] }}"
+  loop: "{{ wireguard_peers_with_keys_tmp }}"
+  loop_control:
+    label: "{{ item[0].allowed_ips }}"

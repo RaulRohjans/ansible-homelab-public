@@ -1,0 +1,22 @@
+---
+- name: Restart seaweedfs master service
+  ansible.builtin.systemd:
+    name: seaweedfs-master.service
+    state: restarted
+  when: inventory_hostname == seaweedfs_master_ip
+
+- name: Restart seaweedfs volume service
+  ansible.builtin.systemd:
+    name: seaweedfs-volume.service
+    state: restarted
+
+- name: Restart seaweedfs filer service
+  ansible.builtin.systemd:
+    name: seaweedfs-filer.service
+    state: restarted
+  when: inventory_hostname == seaweedfs_master_ip
+
+- name: Restart seaweedfs mount service
+  ansible.builtin.systemd:
+    name: seaweedfs-mount.service
+    state: restarted

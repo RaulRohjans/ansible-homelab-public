@@ -1,0 +1,43 @@
+---
+- name: Install mdadm package
+  ansible.builtin.apt:
+    name: mdadm
+    state: present
+  become: true
+
+- name: Create RAID 0 array
+  ansible.builtin.command: >
+    mdadm --create /dev/md0 --level=0 --raid-devices={{ storage_mount_raid_devices | length }} {{ storage_mount_raid_devices | join(' ') }}
+  args:
+    creates: /dev/md0
+  become: true
+
+- name: Create filesystem on RAID array
+  community.general.filesystem:
+    fstype: ext4
+    dev: /dev/md0
+  become: true
+
+- name: Create mount point
+  ansible.builtin.file:
+    path: "{{ storage_mount_point }}"
+    state: directory
+    mode: '0755'
+  become: true
+
+- name: Mount RAID array
+  ansible.posix.mount:
+    path: "{{ storage_mount_point }}"
+    src: /dev/md0
+    fstype: ext4
+    state: mounted
+  become: true
+
+- name: Ensure RAID array is mounted on boot
+  ansible.posix.mount:
+    path: "{{ storage_mount_point }}"
+    src: /dev/md0
+    fstype: ext4
+    opts: defaults
+    state: present
+  become: true

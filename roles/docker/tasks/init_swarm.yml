@@ -1,0 +1,12 @@
+---
+- name: Initialize Docker Swarm
+  ansible.builtin.command: docker swarm init --advertise-addr {{ ansible_host }}
+  when: docker_swarm_manager and groups['mainservers'] | length > 0
+  register: swarm_init_output
+  changed_when: "'Swarm initialized' in swarm_init_output.stdout"
+
+- name: Get join token for worker nodes
+  ansible.builtin.command: docker swarm join-token worker -q
+  when: docker_swarm_manager
+  register: worker_join_token
+  changed_when: false

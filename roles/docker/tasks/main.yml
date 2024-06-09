@@ -1,0 +1,11 @@
+---
+- name: Install Docker on all hosts
+  ansible.builtin.include_tasks: install_docker.yml
+
+- name: Initialize Swarm on mainservers
+  ansible.builtin.include_tasks: init_swarm.yml
+  when: "'mainservers' in group_names"
+
+- name: Join Swarm on slaves
+  ansible.builtin.include_tasks: join_swarm.yml
+  when: "'slaves' in group_names"

@@ -1,0 +1,41 @@
+---
+- name: Ensure wireguard configuration directory is present
+  ansible.builtin.file:
+    path: "{{ wireguard_server_configuration_directory }}"
+    state: directory
+    owner: root
+    group: root
+    mode: '0700'
+  become: true
+
+- name: Generate server private key
+  ansible.builtin.command: wg genkey
+  register: server_private_key
+  changed_when: false
+
+- name: Generate server public key
+  ansible.builtin.shell: |
+    /bin/bash -o pipefail -c 'echo "{{ server_private_key.stdout }}" | wg pubkey'
+  register: server_public_key
+  changed_when: false
+  tags:
+    - skip_ansible_lint
+
+- name: Generate peer private keys
+  ansible.builtin.command: wg genkey
+  register: peer_private_keys
+  with_items: "{{ wireguard_peers }}"
+  changed_when: false
+  loop_control:
+    loop_var: peer
+
+- name: Generate peer public keys
+  ansible.builtin.shell: |
+    /bin/bash -o pipefail -c 'echo "{{ item.stdout }}" | wg pubkey'
+  register: peer_public_keys
+  with_items: "{{ peer_private_keys.results }}"
+  changed_when: false
+  loop_control:
+    loop_var: item
+  tags:
+    - skip_ansible_lint

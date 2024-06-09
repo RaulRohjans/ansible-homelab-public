@@ -1,0 +1,9 @@
+[mainservers]
+192.168.122.199 ansible_host=192.168.122.199
+
+[slaves]
+192.168.122.200 ansible_host=192.168.122.200
+192.168.122.201 ansible_host=192.168.122.201
+
+[all:vars]
+ansible_user=raul

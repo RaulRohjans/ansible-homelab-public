@@ -1,0 +1,11 @@
+[Unit]
+Description=SeaweedFS Master Server
+After=network.target
+
+[Service]
+ExecStart={{ seaweedfs_install_dir }}/weed master -ip={{ seaweedfs_master_ip }} -mdir={{ seaweedfs_data_dir }}/master
+Restart=always
+User=root
+
+[Install]
+WantedBy=multi-user.target

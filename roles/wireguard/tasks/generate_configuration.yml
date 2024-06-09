@@ -1,0 +1,23 @@
+---
+- name: Generate the Wireguard server configuration file
+  ansible.builtin.template:
+    src: "server.conf.j2"
+    dest: "{{ wireguard_server_configuration_directory }}/{{ wireguard_service_interface }}.conf"
+    force: true
+    mode: '0600'
+  become: true
+
+- name: Make sure client config path exists
+  ansible.builtin.file:
+    path: "{{ wireguard_client_configuration_directory }}"
+    state: directory
+    mode: '0755'
+
+- name: Generate the Wireguard client configuration file
+  ansible.builtin.template:
+    src: "client.conf.j2"
+    dest: "{{ wireguard_client_configuration_directory }}/{{ item.name }}.conf"
+    force: true
+    mode: '0600'
+  become: true
+  with_items: "{{ wireguard_peers }}"

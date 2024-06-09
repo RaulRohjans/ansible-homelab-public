@@ -1,0 +1,15 @@
+services:
+  db:
+    image: mariadb:latest
+    command: --transaction-isolation=READ-COMMITTED --binlog-format=ROW
+    volumes:
+      - {{ docker_storage_mount_point }}/mariadb/mariadb-data/:/var/lib/mysql
+    ports:
+      - 3306:3306
+    deploy:
+      placement:
+        constraints: [node.hostname == homeserver]
+    environment:
+      - MYSQL_ROOT_PASSWORD=12345
+      - MYSQL_PASSWORD= # Removed for obvious reasons
+      - MYSQL_USER=raul

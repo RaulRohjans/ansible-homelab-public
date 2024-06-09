@@ -1,0 +1,11 @@
+[Unit]
+Description=SeaweedFS FUSE Mount
+After=network.target
+
+[Service]
+ExecStart={{ seaweedfs_install_dir }}/weed mount -filer={{ seaweedfs_master_ip }}:8888 -dir={{ seaweedfs_fuse_mount }}
+Restart=always
+User=root
+
+[Install]
+WantedBy=multi-user.target

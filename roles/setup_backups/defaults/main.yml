@@ -1,0 +1,4 @@
+---
+setup_backups_storage_script_location: "{{ machine_data_path }}/storage-backup"
+setup_backups_config_location: "{{ machine_data_path }}/rclone"
+setup_backups_cloudmnt_location: /cloudmnt

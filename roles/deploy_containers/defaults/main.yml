@@ -1,0 +1,45 @@
+---
+deploy_containers_networks:
+  - cloudflare-rohjans
+
+deploy_containers_storage_path: "{{ docker_storage_mount_point }}"
+
+deploy_containers_services:
+  - name: portainer
+    has_env: false
+
+  - name: nginx-proxy-manager
+    has_env: false
+
+  - name: docker-registry
+    has_env: false
+
+  - name: mariadb
+    has_env: false
+
+  - name: immich
+    has_env: true
+
+  - name: qbittorrent
+    has_env: false
+
+  - name: plausible
+    has_env: true
+
+  - name: nextcloud
+    has_env: false
+
+  - name: earnapp
+    has_env: false
+
+  - name: honeygain
+    has_env: false
+
+  - name: iproyal-pawns
+    has_env: false
+
+  - name: packet-stream
+    has_env: false
+
+  # - name: traefik
+  # has_env: false

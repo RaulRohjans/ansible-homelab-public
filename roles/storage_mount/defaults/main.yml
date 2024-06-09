@@ -1,0 +1,3 @@
+---
+storage_mount_raid_devices: []
+  # - /dev/vdb

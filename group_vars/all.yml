@@ -1,0 +1,58 @@
+---
+# ------------- Global Variables --------------- #
+
+machine_data_path: /var/opt
+storage_mount_point: /storage
+docker_storage_mount_point: /docker-storage
+
+# ----------------------------------------------- #
+
+
+# ------------- Storage Mount --------------- #
+
+storage_mount_raid_devices:
+  - /dev/vdb
+  - /dev/vdc
+
+# ------------------------------------------- #
+
+
+# ------------- Samba --------------- #
+
+samba_users:
+  - name: raul
+    password: 123
+
+    #SHA256
+    hashed_password: 3c9909afec25354d551dae21590bb26e38d53f2173b8d3dc3eee4c047e7ab1c1eb8b85103e3be7ba613b31bb5c9c36214dc9f14a42fd7a2fdb84856bca5c44c2
+    share_name: Raul
+    share_path: "{{ samba_share_path }}/Raul"
+
+# ----------------------------------- #
+
+
+# ------------- Seaweedfs --------------- #
+
+seaweedfs_data_dir: "{{ storage_mount_point }}/seaweedfs"
+seaweedfs_fuse_mount: "{{ docker_storage_mount_point }}"
+
+# ---------------------------------------- #
+
+
+# ------------- Wireguard --------------- #
+
+wireguard_server_internal_interface: "enp1s0"
+wireguard_server_public_ip: 192.168.122.199
+
+wireguard_peers:
+  # Main peer
+  - name: main
+    allowed_ips: "0.0.0.0/0, ::0/0"
+    client_ip: 10.7.0.2
+
+  # Secondary peer
+  - name: secondary
+    allowed_ips: "0.0.0.0/0, ::0/0"
+    client_ip: 10.7.0.3
+
+# ---------------------------------------- #
